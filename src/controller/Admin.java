@@ -59,7 +59,7 @@ public class Admin {
     }
 
     private void viewTotalSales() {
-        String sql = "SELECT SUM(total_amount) AS total_sales FROM orders";
+        String sql = "SELECT SUM(total) AS total_sales FROM orders";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
