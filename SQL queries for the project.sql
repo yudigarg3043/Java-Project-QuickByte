@@ -16,6 +16,22 @@ CREATE TABLE IF NOT EXISTS orders (
     order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS food_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(100) NOT NULL,
+    price INT NOT NULL
+);
+
+INSERT INTO food_items (name, price) VALUES
+('Fries', 80),
+('Cold Coffee', 120),
+('Burger', 150),
+('Garlic Bread', 150),
+('Pasta', 200),
+('Pizza', 250);
+
+
 show tables;
 
 select * from users;
