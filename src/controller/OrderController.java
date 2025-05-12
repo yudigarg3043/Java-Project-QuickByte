@@ -19,7 +19,7 @@ public class OrderController {
         String sql = "SELECT name, price FROM food_items"; // SQL query to fetch menu items
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) { //Returns ResultSet
 
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -34,6 +34,7 @@ public class OrderController {
         }
     }
 
+    //View Menu
     public void viewMenu() {
         DSAUtils.sortMenu(menu);
         while (true) {
@@ -55,7 +56,7 @@ public class OrderController {
                     int qty;
                     try {
                         qty = sc.nextInt();
-                        sc.nextLine();
+                        sc.nextLine(); // Clearing Buffer Created by nextInt()
                         if (qty <= 0) {
                             System.out.println("Quantity must be at least 1.");
                             break;
@@ -85,6 +86,7 @@ public class OrderController {
         }
     }
 
+    //View Items in Cart
     public void viewOrder() {
         double totalAmount = 0;  // To store the total bill amount
 
@@ -110,6 +112,7 @@ public class OrderController {
         System.out.println("\nTotal Amount: ₹" + totalAmount);
     }
 
+    // Checkout order
     public void checkout(User user) throws SQLException {
         if (cart.isEmpty()) {
             System.out.println("No items to checkout.");
@@ -138,7 +141,7 @@ public class OrderController {
         }
 
         // Remove trailing comma and space
-        if (items.length() > 0) {
+        if (!items.isEmpty()) {
             items.setLength(items.length() - 2);
         }
 
@@ -155,7 +158,7 @@ public class OrderController {
         stmt.setString(2, items.toString());
         stmt.setString(3, address);
         stmt.setInt(4, totalAmount);
-        stmt.executeUpdate();
+        stmt.executeUpdate(); //Returns Int
         conn.close();
 
         cart.clear();
@@ -163,6 +166,7 @@ public class OrderController {
         System.out.println("Your order will be shortly delivered at " + address);
     }
 
+    //Function to print Bill
     public void printBill(User user, String address) {
         String line = "╔" + "═".repeat(60) + "╗";
         String mid = "╟" + "─".repeat(60) + "╢";
@@ -194,6 +198,7 @@ public class OrderController {
         System.out.println("        Thank you for shopping with QuickByte!");
     }
 
+    //Fetch Price of item from menu(Linked List)
     public double getPrice(String item) {
         for (MenuItem menuItem : menu) {
             if (menuItem.name.equalsIgnoreCase(item)) {
@@ -203,13 +208,13 @@ public class OrderController {
         return -1; // Item not found
     }
 
-
+    //View Past Order History
     public void pastOrders(User user) throws SQLException {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, user.id);
-        ResultSet rs = stmt.executeQuery();
+        ResultSet rs = stmt.executeQuery(); //Returns ResultSet
 
         System.out.println("---- Past Orders ----");
         while (rs.next()) {
