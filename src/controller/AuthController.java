@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class AuthController {
     private Scanner sc = new Scanner(System.in);
 
+    // USer Registration
     public User register() throws SQLException {
         System.out.println("---- Registering User ----");
         System.out.print("Enter username: ");
@@ -29,31 +30,7 @@ public class AuthController {
         return login(); // auto login after registration
     }
 
-//    public User login() throws SQLException {
-//        System.out.print("Enter username: ");
-//        String username = sc.next();
-//        System.out.print("Enter password: ");
-//        String password = sc.next();
-//
-//        Connection conn = DBConnection.getConnection();
-//        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-//        PreparedStatement stmt = conn.prepareStatement(sql);
-//        stmt.setString(1, username);
-//        stmt.setString(2, password);
-//        ResultSet rs = stmt.executeQuery();
-//
-//        if (rs.next()) {
-//            User user = new User(username, rs.getString("email"), password);
-//            user.id = rs.getInt("id");
-//            conn.close();
-//            return user;
-//        } else {
-//            System.out.println("Invalid credentials.");
-//            conn.close();
-//            return null;
-//        }
-//    }
-
+    //User Log In
     public User login() throws SQLException {
         System.out.println("---- Logging In ----");
         System.out.print("Enter username: ");

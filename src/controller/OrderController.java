@@ -34,37 +34,6 @@ public class OrderController {
         }
     }
 
-//    public void viewMenu() {
-//        DSAUtils.sortMenu(menu);
-//        while (true) {
-//            System.out.println("---- Menu (Sorted by Price) ----");
-//            for (MenuItem item : menu) {
-//                System.out.println(item.name + " - ₹" + item.price);
-//            }
-//            System.out.print("Add item to cart? (name or 'no'): ");
-//            String choice = sc.next();
-//            if (choice.equalsIgnoreCase("no")) {
-//                break;
-//            }
-//
-//            // Convert input and menu items to lowercase for comparison
-//            boolean itemFound = false;
-//            for (MenuItem item : menu) {
-//                if (item.name.equalsIgnoreCase(choice)) {
-//                    cart.put(item.name, cart.getOrDefault(item.name, 0) + 1);
-//                    orderStack.push(item.name);
-//                    System.out.println(item.name + " added to cart.");
-//                    itemFound = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!itemFound) {
-//                System.out.println("Incorrect item name, re-enter item name.");
-//            }
-//        }
-//    }
-
     public void viewMenu() {
         DSAUtils.sortMenu(menu);
         while (true) {
@@ -116,15 +85,6 @@ public class OrderController {
         }
     }
 
-
-
-//    public void viewOrder() {
-//        System.out.println("---- Current Order ----");
-//        for (Map.Entry<String, Integer> entry : cart.entrySet()) {
-//            System.out.println(entry.getKey() + " x " + entry.getValue());
-//        }
-//    }
-
     public void viewOrder() {
         double totalAmount = 0;  // To store the total bill amount
 
@@ -149,34 +109,6 @@ public class OrderController {
         // Display total amount of the bill
         System.out.println("\nTotal Amount: ₹" + totalAmount);
     }
-
-//    public void checkout(User user) throws SQLException {
-//        if (cart.isEmpty()) {
-//            System.out.println("No items to checkout.");
-//            return;
-//        }
-//        System.out.print("Enter your address: ");
-//        sc.nextLine(); // consume newline
-//        String address = sc.nextLine();
-//
-//        StringBuilder items = new StringBuilder();
-//        for (String item : orderStack) items.append(item).append(", ");
-//        pastOrderList.add("Items: " + items.toString() + "Address: " + address);
-//
-//        // Save to DB
-//        Connection conn = DBConnection.getConnection();
-//        String sql = "INSERT INTO orders (user_id, items, address) VALUES (?, ?, ?)";
-//        PreparedStatement stmt = conn.prepareStatement(sql);
-//        stmt.setInt(1, user.id);
-//        stmt.setString(2, items.toString());
-//        stmt.setString(3, address);
-//        stmt.executeUpdate();
-//        conn.close();
-//
-//        cart.clear();
-//        orderStack.clear();
-//        System.out.println("Your order will be shortly delivered at " + address);
-//    }
 
     public void checkout(User user) throws SQLException {
         if (cart.isEmpty()) {
