@@ -73,7 +73,7 @@ public class OrderController {
                 System.out.println(item.name + " - ₹" + item.price);
             }
 
-            System.out.print("Add item to cart? (name or 'no'): ");
+            System.out.print("Add item to cart? (name of the item or 'no' to exit): ");
             String choice = sc.nextLine();
             if (choice.equalsIgnoreCase("no")) {
                 break;
@@ -131,7 +131,7 @@ public class OrderController {
         System.out.println("---- Current Order ----");
 
         // Iterate through the cart to display items and calculate the total
-        for (Map.Entry<String, Integer> entry : cart.entrySet()) {
+        for (Map.Entry<String, Integer> entry : cart.entrySet()) { // {pasta : 3}
             String itemName = entry.getKey();
             int quantity = entry.getValue();
 

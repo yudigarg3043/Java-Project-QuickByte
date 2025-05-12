@@ -10,6 +10,7 @@ public class AuthController {
     private Scanner sc = new Scanner(System.in);
 
     public User register() throws SQLException {
+        System.out.println("---- Registering User ----");
         System.out.print("Enter username: ");
         String username = sc.next();
         System.out.print("Enter email: ");
@@ -54,6 +55,7 @@ public class AuthController {
 //    }
 
     public User login() throws SQLException {
+        System.out.println("---- Logging In ----");
         System.out.print("Enter username: ");
         String username = sc.next();
         System.out.print("Enter password: ");
