@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS orders (
     user_id INT NOT NULL,
     items TEXT NOT NULL,
     address TEXT NOT NULL,
+    total INT NOT NULL,
     order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
