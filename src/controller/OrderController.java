@@ -86,6 +86,74 @@ public class OrderController {
         }
     }
 
+    // Remove Items from Cart
+    public void removeFromCart() {
+        if (cart.isEmpty()) {
+            System.out.println("Your cart is empty.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("---- Current Cart ----");
+            for (Map.Entry<String, Integer> entry : cart.entrySet()) {
+                System.out.println(entry.getKey() + " - Quantity: " + entry.getValue());
+            }
+
+            System.out.print("Enter item name to remove (or type 'no' to exit): ");
+            String choice = sc.nextLine();
+            if (choice.equalsIgnoreCase("no")) {
+                break;
+            }
+
+            if (!cart.containsKey(choice)) {
+                System.out.println("Item not found in cart. Please re-enter item name.");
+                continue;
+            }
+
+            System.out.print("Enter quantity to remove: ");
+            int qtyToRemove;
+            try {
+                qtyToRemove = sc.nextInt();
+                sc.nextLine(); // Clear buffer
+                if (qtyToRemove <= 0) {
+                    System.out.println("Quantity must be at least 1.");
+                    continue;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                sc.nextLine(); // Clear invalid input
+                continue;
+            }
+
+            int currentQty = cart.get(choice);
+            if (qtyToRemove >= currentQty) {
+                cart.remove(choice);
+                System.out.println("Removed all of " + choice + " from cart.");
+            } else {
+                cart.put(choice, currentQty - qtyToRemove);
+                System.out.println("Removed " + qtyToRemove + " of " + choice + " from cart.");
+            }
+
+            // Remove from orderStack
+            int removed = 0;
+            Stack<String> tempStack = new Stack<>();
+            while (!orderStack.isEmpty() && removed < qtyToRemove) {
+                String top = orderStack.pop();
+                if (top.equalsIgnoreCase(choice)) {
+                    removed++;
+                } else {
+                    tempStack.push(top);
+                }
+            }
+
+            // Restore other items
+            while (!tempStack.isEmpty()) {
+                orderStack.push(tempStack.pop());
+            }
+        }
+    }
+
+
     //View Items in Cart
     public void viewOrder() {
         double totalAmount = 0;  // To store the total bill amount
