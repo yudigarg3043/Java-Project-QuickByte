@@ -19,7 +19,7 @@ public class OrderController {
         String sql = "SELECT name, price FROM food_items"; // SQL query to fetch menu items
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) { //Returns ResultSet
 
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -34,6 +34,7 @@ public class OrderController {
         }
     }
 
+    //View Menu
     public void viewMenu() {
         DSAUtils.sortMenu(menu);
         while (true) {
@@ -55,7 +56,7 @@ public class OrderController {
                     int qty;
                     try {
                         qty = sc.nextInt();
-                        sc.nextLine();
+                        sc.nextLine(); // Clearing Buffer Created by nextInt()
                         if (qty <= 0) {
                             System.out.println("Quantity must be at least 1.");
                             break;
@@ -85,6 +86,75 @@ public class OrderController {
         }
     }
 
+    // Remove Items from Cart
+    public void removeFromCart() {
+        if (cart.isEmpty()) {
+            System.out.println("Your cart is empty.");
+            return;
+        }
+
+        while (true) {
+            System.out.println("---- Current Cart ----");
+            for (Map.Entry<String, Integer> entry : cart.entrySet()) {
+                System.out.println(entry.getKey() + " - Quantity: " + entry.getValue());
+            }
+
+            System.out.print("Enter item name to remove (or type 'no' to exit): ");
+            String choice = sc.nextLine();
+            if (choice.equalsIgnoreCase("no")) {
+                break;
+            }
+
+            if (!cart.containsKey(choice)) {
+                System.out.println("Item not found in cart. Please re-enter item name.");
+                continue;
+            }
+
+            System.out.print("Enter quantity to remove: ");
+            int qtyToRemove;
+            try {
+                qtyToRemove = sc.nextInt();
+                sc.nextLine(); // Clear buffer
+                if (qtyToRemove <= 0) {
+                    System.out.println("Quantity must be at least 1.");
+                    continue;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                sc.nextLine(); // Clear invalid input
+                continue;
+            }
+
+            int currentQty = cart.get(choice);
+            if (qtyToRemove >= currentQty) {
+                cart.remove(choice);
+                System.out.println("Removed all of " + choice + " from cart.");
+            } else {
+                cart.put(choice, currentQty - qtyToRemove);
+                System.out.println("Removed " + qtyToRemove + " of " + choice + " from cart.");
+            }
+
+            // Remove from orderStack
+            int removed = 0;
+            Stack<String> tempStack = new Stack<>();
+            while (!orderStack.isEmpty() && removed < qtyToRemove) {
+                String top = orderStack.pop();
+                if (top.equalsIgnoreCase(choice)) {
+                    removed++;
+                } else {
+                    tempStack.push(top);
+                }
+            }
+
+            // Restore other items
+            while (!tempStack.isEmpty()) {
+                orderStack.push(tempStack.pop());
+            }
+        }
+    }
+
+
+    //View Items in Cart
     public void viewOrder() {
         double totalAmount = 0;  // To store the total bill amount
 
@@ -110,6 +180,7 @@ public class OrderController {
         System.out.println("\nTotal Amount: ₹" + totalAmount);
     }
 
+    // Checkout order
     public void checkout(User user) throws SQLException {
         if (cart.isEmpty()) {
             System.out.println("No items to checkout.");
@@ -138,7 +209,7 @@ public class OrderController {
         }
 
         // Remove trailing comma and space
-        if (items.length() > 0) {
+        if (!items.isEmpty()) {
             items.setLength(items.length() - 2);
         }
 
@@ -155,7 +226,7 @@ public class OrderController {
         stmt.setString(2, items.toString());
         stmt.setString(3, address);
         stmt.setInt(4, totalAmount);
-        stmt.executeUpdate();
+        stmt.executeUpdate(); //Returns Int
         conn.close();
 
         cart.clear();
@@ -163,6 +234,7 @@ public class OrderController {
         System.out.println("Your order will be shortly delivered at " + address);
     }
 
+    //Function to print Bill
     public void printBill(User user, String address) {
         String line = "╔" + "═".repeat(60) + "╗";
         String mid = "╟" + "─".repeat(60) + "╢";
@@ -194,6 +266,7 @@ public class OrderController {
         System.out.println("        Thank you for shopping with QuickByte!");
     }
 
+    //Fetch Price of item from menu(Linked List)
     public double getPrice(String item) {
         for (MenuItem menuItem : menu) {
             if (menuItem.name.equalsIgnoreCase(item)) {
@@ -203,13 +276,13 @@ public class OrderController {
         return -1; // Item not found
     }
 
-
+    //View Past Order History
     public void pastOrders(User user) throws SQLException {
         Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM orders WHERE user_id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, user.id);
-        ResultSet rs = stmt.executeQuery();
+        ResultSet rs = stmt.executeQuery(); //Returns ResultSet
 
         System.out.println("---- Past Orders ----");
         while (rs.next()) {

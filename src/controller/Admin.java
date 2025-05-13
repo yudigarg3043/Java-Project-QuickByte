@@ -24,7 +24,7 @@ public class Admin {
 
             System.out.print("Choose an option: ");
             int choice = sc.nextInt();
-            sc.nextLine(); // consume newline
+            sc.nextLine(); // Clearing Buffer Created by nextInt()
 
             switch (choice) {
                 case 1:
@@ -51,12 +51,13 @@ public class Admin {
         }
     }
 
+    //View Menu
     public void viewMenu(){
         String sql = "SELECT name, price FROM food_items"; // SQL query to fetch menu items
         List<MenuItem> menu = new LinkedList<>();
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) { //Returns ResultSet
 
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -66,7 +67,7 @@ public class Admin {
                 menu.add(new MenuItem(name, price));
             }
 
-            DSAUtils.sortMenu(menu);
+            DSAUtils.sortMenu(menu); //Sorting Menu Based on price using bubble sort
             System.out.println("---- Menu (Sorted by Price) ----");
             for (MenuItem item : menu) {
                 System.out.println(item.name + " - ₹" + item.price);
@@ -77,6 +78,7 @@ public class Admin {
         }
     }
 
+    //Add Items in Menu
     private void addItemToMenu() {
         System.out.println("---- Existing Menu ----");
         viewMenu();
@@ -91,7 +93,7 @@ public class Admin {
 
             stmt.setString(1, name);
             stmt.setDouble(2, price);
-            int rows = stmt.executeUpdate();
+            int rows = stmt.executeUpdate(); //Return Int
             if (rows > 0) {
                 System.out.println("Item added successfully.");
             } else {
@@ -103,6 +105,7 @@ public class Admin {
         }
     }
 
+    //Remove Items from Menu
     private void removeItemFromMenu() {
         System.out.println("---- Existing Menu ----");
         viewMenu();
@@ -114,7 +117,7 @@ public class Admin {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, name);
-            int rows = stmt.executeUpdate();
+            int rows = stmt.executeUpdate(); //Return Int
 
             if (rows > 0) {
                 System.out.println("Item removed successfully.");
@@ -127,6 +130,7 @@ public class Admin {
         }
     }
 
+    //Update Item Price in Menu
     private void updateItemPrice() {
         System.out.println("---- Existing Menu ----");
         viewMenu();
@@ -142,7 +146,7 @@ public class Admin {
 
             stmt.setDouble(1, newPrice);
             stmt.setString(2, name);
-            int rows = stmt.executeUpdate();
+            int rows = stmt.executeUpdate(); //Return Int
 
             if (rows > 0) {
                 System.out.println("Item price updated successfully.");
@@ -155,12 +159,12 @@ public class Admin {
         }
     }
 
-
+    //Calculating and giving Total Sale as Output
     private void viewTotalSales() {
         String sql = "SELECT SUM(total) AS total_sales FROM orders";
         try (Connection conn = DBConnection.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) { //Returns ResultSet
 
             if (rs.next()) {
                 double totalSales = rs.getDouble("total_sales");

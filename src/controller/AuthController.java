@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class AuthController {
     private Scanner sc = new Scanner(System.in);
 
-    // USer Registration
+    // User Registration
     public User register() throws SQLException {
         System.out.println("---- Registering User ----");
         System.out.print("Enter username: ");
@@ -25,7 +25,7 @@ public class AuthController {
         stmt.setString(1, username);
         stmt.setString(2, email);
         stmt.setString(3, password);
-        stmt.executeUpdate();
+        stmt.executeUpdate(); //Returns Int
         conn.close();
         return login(); // auto login after registration
     }
@@ -43,7 +43,7 @@ public class AuthController {
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, username);
         stmt.setString(2, password);
-        ResultSet rs = stmt.executeQuery();
+        ResultSet rs = stmt.executeQuery(); //Returns ResultSet
 
         if (rs.next()) {
             User user = new User(username, rs.getString("email"), password);

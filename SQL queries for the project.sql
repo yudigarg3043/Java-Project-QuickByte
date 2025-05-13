@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(100) NOT NULL
 );
 
+INSERT INTO users (username, email, password) VALUES
+('Admin', 'Admin123@gmail.com', 'Admin@123');
+
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
