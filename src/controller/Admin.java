@@ -16,11 +16,12 @@ public class Admin {
         while (true) {
             System.out.println("\n=== Admin Menu ===");
             System.out.println("1. View Menu");
-            System.out.println("2. Add item to menu");
-            System.out.println("3. Remove item from menu");
-            System.out.println("4. Update item price in menu");
-            System.out.println("5. View total sales");
-            System.out.println("6. Exit");
+            System.out.println("2. View All Registered User");
+            System.out.println("3. Add item to menu");
+            System.out.println("4. Remove item from menu");
+            System.out.println("5. Update item price in menu");
+            System.out.println("6. View total sales");
+            System.out.println("7. Exit");
 
             System.out.print("Choose an option: ");
             int choice = sc.nextInt();
@@ -31,18 +32,21 @@ public class Admin {
                     viewMenu();
                     break;
                 case 2:
-                    addItemToMenu();
+                    viewAllRegisteredUsers();
                     break;
                 case 3:
-                    removeItemFromMenu();
+                    addItemToMenu();
                     break;
                 case 4:
-                    updateItemPrice();
+                    removeItemFromMenu();
                     break;
                 case 5:
-                    viewTotalSales();
+                    updateItemPrice();
                     break;
                 case 6:
+                    viewTotalSales();
+                    break;
+                case 7:
                     System.out.println("Exiting admin menu.");
                     return;
                 default:
@@ -77,6 +81,36 @@ public class Admin {
             System.out.println("Error fetching menu from database: " + e.getMessage());
         }
     }
+
+    //View All RegisteredUser
+    private void viewAllRegisteredUsers() {
+        String sql = "SELECT id, username, email FROM users";
+        try (Connection conn = DBConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            System.out.println("List of Registered Users:");
+            System.out.println("---------------------------------------------");
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String username = rs.getString("username");
+                String email = rs.getString("email");
+
+                if(username.equals("Admin")) continue;
+
+                System.out.println("ID: " + id);
+                System.out.println("Name: " + username);
+                System.out.println("Email: " + email);
+                System.out.println("---------------------------------------------");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     //Add Items in Menu
     private void addItemToMenu() {

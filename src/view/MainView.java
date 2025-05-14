@@ -13,12 +13,13 @@ public class MainView {
         User user = null;
 
         while (true) {
-            System.out.println("\n1. Register\n2. Login\nChoose: ");
+            System.out.println("\n1. Register\n2. Login\n3. Exit\nChoose: ");
             int choice = sc.nextInt();
 
             try {
                 if (choice == 1) user = auth.register();
                 else if (choice == 2) user = auth.login();
+                else break;
 
                 if (user != null) {
                     OrderController orderController = new OrderController();

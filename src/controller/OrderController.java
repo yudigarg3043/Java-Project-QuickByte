@@ -3,7 +3,6 @@ package controller;
 import model.DBConnection;
 import model.User;
 import utils.MenuItem;
-import utils.DSAUtils;
 
 import java.sql.*;
 import java.util.*;
@@ -36,55 +35,123 @@ public class OrderController {
 
     //View Menu
     public void viewMenu() {
-        DSAUtils.sortMenu(menu);
-        while (true) {
-            System.out.println("---- Menu (Sorted by Price) ----");
-            for (MenuItem item : menu) {
-                System.out.println(item.name + " - ₹" + item.price);
+        while(true){
+            System.out.println("Select a category:");
+            System.out.println("1. Snacks");
+            System.out.println("2. Starters");
+            System.out.println("3. Beverages");
+            System.out.println("4. Main Course");
+            System.out.println("5. Desserts");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice (1-6): ");
+
+            int categoryChoice;
+            try {
+                categoryChoice = sc.nextInt();
+                sc.nextLine();
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input.");
+                return;
+            }
+            if(categoryChoice == 6) break;
+
+            String category = null;
+
+            switch(categoryChoice){
+                case 1:
+                    category = "Snacks";
+                    break;
+                case 2:
+                    category = "Starters";
+                    break;
+                case 3:
+                    category = "Beverages";
+                    break;
+                case 4:
+                    category = "Main Course";
+                    break;
+                case 5:
+                    category = "Desserts";
+                    break;
+                default:
+                    System.out.println("Wrong Choice");
             }
 
-            System.out.print("Add item to cart? (name of the item or 'no' to exit): ");
-            String choice = sc.nextLine();
-            if (choice.equalsIgnoreCase("no")) {
-                break;
+            List<MenuItem> categoryMenu = new ArrayList<>();
+
+            // Fetch items from DB based on category
+            String sql = "SELECT name, price FROM food_items WHERE category = ? ORDER BY price ASC";
+
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setString(1, category);
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String name = rs.getString("name");
+                    double price = rs.getDouble("price");
+                    categoryMenu.add(new MenuItem(name, price));
+                }
+
+            } catch (SQLException e) {
+                System.out.println("Error fetching menu from database.");
+                e.printStackTrace();
+                return;
             }
 
-            boolean itemFound = false;
-            for (MenuItem item : menu) {
-                if (item.name.equalsIgnoreCase(choice)) {
-                    System.out.print("Enter quantity: ");
-                    int qty;
-                    try {
-                        qty = sc.nextInt();
-                        sc.nextLine(); // Clearing Buffer Created by nextInt()
-                        if (qty <= 0) {
-                            System.out.println("Quantity must be at least 1.");
+            if (categoryMenu.isEmpty()) {
+                System.out.println("No items available in this category.");
+                return;
+            }
+
+            while (true) {
+                System.out.println("---- " + category + " Menu (Sorted by Price) ----");
+                for (MenuItem item : categoryMenu) {
+                    System.out.println(item.name + " - ₹" + item.price);
+                }
+
+                System.out.print("Add item to cart? (name of the item or 'no' to exit): ");
+                String choice = sc.nextLine();
+                if (choice.equalsIgnoreCase("no")) break;
+
+                boolean itemFound = false;
+                for (MenuItem item : categoryMenu) {
+                    if (item.name.equalsIgnoreCase(choice)) {
+                        System.out.print("Enter quantity: ");
+                        int qty;
+                        try {
+                            qty = sc.nextInt();
+                            sc.nextLine(); // Clear buffer
+                            if (qty <= 0) {
+                                System.out.println("Quantity must be at least 1.");
+                                break;
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid quantity. Please enter a number.");
+                            sc.nextLine(); // clear invalid input
                             break;
                         }
-                    } catch (InputMismatchException e) {
-                        System.out.println("Invalid quantity. Please enter a number.");
-                        sc.nextLine(); // clear invalid input
+
+                        cart.put(item.name, cart.getOrDefault(item.name, 0) + qty);
+
+                        for (int i = 0; i < qty; i++) {
+                            orderStack.push(item.name);
+                        }
+
+                        System.out.println(qty + " x " + item.name + " added to cart.");
+                        itemFound = true;
                         break;
                     }
-
-                    cart.put(item.name, cart.getOrDefault(item.name, 0) + qty);
-
-                    // Push item to orderStack `qty` times
-                    for (int i = 0; i < qty; i++) {
-                        orderStack.push(item.name);
-                    }
-
-                    System.out.println(qty + " x " + item.name + " added to cart.");
-                    itemFound = true;
-                    break;
                 }
-            }
 
-            if (!itemFound) {
-                System.out.println("Incorrect item name, re-enter item name.");
+                if (!itemFound) {
+                    System.out.println("Incorrect item name, re-enter item name.");
+                }
             }
         }
     }
+
 
     // Remove Items from Cart
     public void removeFromCart() {
@@ -286,7 +353,8 @@ public class OrderController {
 
         System.out.println("---- Past Orders ----");
         while (rs.next()) {
-            System.out.println("Items: " + rs.getString("items") + "\nDelivered at: " + rs.getString("address") + " for the total of: " + rs.getInt("total") + " at: " + rs.getString("order_time"));
+            System.out.println("Items: " + rs.getString("items") + "\nDelivered at: " + rs.getString("address") + "\nBill Total: " + rs.getInt("total") + "\nTime: " + rs.getString("order_time"));
+            System.out.println("---------------------------------------------");
         }
         conn.close();
     }
